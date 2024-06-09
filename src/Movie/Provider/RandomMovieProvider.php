@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace App\Movie\Provider;
 
+use RuntimeException;
+
 use function array_flip;
 use function array_rand;
 
@@ -27,8 +29,8 @@ class RandomMovieProvider extends AbstractMovieProvider
     {
         $allMovies = $this->getAllMovies();
 
-        if (empty($allMovies)) {
-            return [];
+        if (count($allMovies) < self::COUNT_RANDOM_MOVIES) {
+            throw new RuntimeException('Not sufficient data source');
         }
 
         return array_rand(array_flip($allMovies), self::COUNT_RANDOM_MOVIES);

@@ -17,6 +17,7 @@ use App\Movie\Provider\ProviderTypeEnum;
 use App\Movie\Provider\RandomMovieProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 
 use function srand;
 
@@ -63,22 +64,18 @@ final class RandomMovieProviderTest extends TestCase
         srand();
     }
 
-    public function testGetMoviesWithEmptyDataSource(): void
+    public function testGetMoviesWithNotSufficientDataSource(): void
     {
-        // Define seed for php random functions
-        srand(1);
-
         $provider = $this->getProvider();
 
         $provider->expects($this->once())
             ->method('getAllMovies')
             ->willReturn([]);
 
-        $result = $provider->getMovies();
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Not sufficient data source');
 
-        $this->assertEmpty($result);
-
-        srand();
+        $provider->getMovies();
     }
 
     public function testGetType(): void
